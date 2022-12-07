@@ -220,3 +220,11 @@ $(document).ready(function(){
   console.log(game)
   depthInput = document.querySelector('#depth-input')
 });
+
+// Stop scrolling on mobile
+document.ontouchstart = function(e){ 
+  e.preventDefault(); 
+}
+document.ontouchmove = function(e){ 
+  e.preventDefault(); 
+}
