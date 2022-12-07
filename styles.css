@@ -1,6 +1,7 @@
 body, html {
     margin: 0;
     padding: 0;
+    height: 100%;
 }
 
 .highlight-white {
@@ -15,7 +16,7 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100%;
     flex-direction: column;
 }
 
