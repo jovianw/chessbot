@@ -35,7 +35,7 @@ function onDragStart (source, piece, position, orientation) {
 
 function evaluateBoard(localGame, player) {
   // Calculate the material value of the localGame for the given player
-  let materialValue = 0;
+  let materialValue = Math.random();
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
       const piece = localGame.get(String.fromCharCode(97 + i) + j);
@@ -222,9 +222,9 @@ $(document).ready(function(){
 });
 
 // Stop scrolling on mobile
-document.ontouchstart = function(e){ 
+function preventBehavior(e) {
   e.preventDefault(); 
-}
-document.ontouchmove = function(e){ 
-  e.preventDefault(); 
-}
+};
+
+document.addEventListener("touchmove", preventBehavior, {passive: false});
+document.addEventListener("touchstart", preventBehavior, {passive: false});
