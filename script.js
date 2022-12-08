@@ -443,4 +443,3 @@ function preventBehavior(e) {
 };
 
 document.addEventListener("touchmove", preventBehavior, {passive: false});
-document.addEventListener("touchstart", preventBehavior, {passive: false});
