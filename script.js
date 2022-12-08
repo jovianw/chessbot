@@ -48,22 +48,22 @@ function getPieceValue (piece, x, y) {
   }
   isWhite = (piece.color == 'w')
   if (piece.type === 'p') {
-    return ( isWhite ? pawnEvalWhite[7-y][x] : pawnEvalWhite[y][x] );
+    return ( isWhite ? pawnEval[7-y][x] : pawnEval[y][x] );
   } else if (piece.type === 'r') {
-      return ( isWhite ? rookEvalWhite[7-y][x] : rookEvalWhite[y][x] );
+      return ( isWhite ? rookEval[7-y][x] : rookEval[y][x] );
   } else if (piece.type === 'n') {
       return knightEval[y][x];
   } else if (piece.type === 'b') {
-      return ( isWhite ? bishopEvalWhite[7-y][x] : bishopEvalWhite[y][x] );
+      return ( isWhite ? bishopEval[7-y][x] : bishopEval[y][x] );
   } else if (piece.type === 'q') {
-      return evalQueen[y][x];
+      return queenEval[y][x];
   } else if (piece.type === 'k') {
-      return ( isWhite ? kingEvalWhite[7-y][x] : kingEvalWhite[y][x] );
+      return ( isWhite ? kingEval[7-y][x] : kingEval[y][x] );
   }
   throw "Unknown piece type: " + piece.type;
 };
 
-var pawnEvalWhite =
+var pawnEval =
   [
       [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
       [5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0],
@@ -87,7 +87,7 @@ var knightEval =
       [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0]
   ];
 
-var bishopEvalWhite = [
+var bishopEval = [
   [ -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0],
   [ -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0],
   [ -1.0,  0.0,  0.5,  1.0,  1.0,  0.5,  0.0, -1.0],
@@ -98,7 +98,7 @@ var bishopEvalWhite = [
   [ -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0]
 ];
 
-var rookEvalWhite = [
+var rookEval = [
   [  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
   [  0.5,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  0.5],
   [ -0.5,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5],
@@ -109,7 +109,7 @@ var rookEvalWhite = [
   [  0.0,   0.0, 0.0,  0.5,  0.5,  0.0,  0.0,  0.0]
 ];
 
-var evalQueen =
+var queenEval =
   [
   [ -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0],
   [ -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0],
@@ -121,7 +121,7 @@ var evalQueen =
   [ -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0]
 ];
 
-var kingEvalWhite = [
+var kingEval = [
 
   [ -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
   [ -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
@@ -308,7 +308,7 @@ function makeMove () {
   if (game.game_over()) return
 
   // DEBUG
-  // console.log(pawnEvalWhite)
+  // console.log(pawnEval)
   // console.log(pawnEvalBlack)
   // console.log(document.querySelector('#dual-engine').checked)
   
