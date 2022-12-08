@@ -149,7 +149,20 @@ function minValue(localGame, player, depth, alpha, beta) {
 //-------------------END MINIMAX
 
 
+function checkGameEnd () {
+  if (game.game_over()) {
+    $message.text("End")
+    if (game.in_checkmate()) {
+      $message.text("Checkmate")
+    }
+    if (game.in_draw()) {
+      $message.text("Draw")
+    }
+  }
+}
+
 function makeMove () {
+  checkGameEnd()
   // game over
   if (game.game_over()) return
 
@@ -172,6 +185,8 @@ function makeMove () {
 
   // update the board to the new position
   board.position(game.fen())
+
+  checkGameEnd()
 }
 
 function onDrop (source, target) {
@@ -216,6 +231,7 @@ var config = {
 
 $(document).ready(function(){
   $board = $('#myBoard')
+  $message = $('#message')
   board = Chessboard('myBoard', config)
   console.log(game)
   depthInput = document.querySelector('#depth-input')
