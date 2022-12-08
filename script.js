@@ -188,10 +188,10 @@ function evaluateBoard(localGame, player) {
         const piece = localGame.get(String.fromCharCode(97 + i) + (j + 1));
         if (piece) {
           if (piece.color === player) {
-            utility += pieceValues[piece.type];
+            utility += 10 * pieceValues[piece.type];
             utility += getPieceValue(piece, i ,j);
           } else {
-            utility -= pieceValues[piece.type];
+            utility -= 10 * pieceValues[piece.type];
             utility -= getPieceValue(piece, i ,j);
           }
         }
@@ -199,9 +199,9 @@ function evaluateBoard(localGame, player) {
     }
     if (localGame.in_checkmate()) {
       if (localGame.turn() === player) {
-        utility -= 100;
+        utility -= 1000;
       } else {
-        utility += 100;
+        utility += 1000;
       }
     }
   }
