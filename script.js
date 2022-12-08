@@ -183,13 +183,6 @@ function evaluateBoard(localGame, player) {
         totalEvaluation = totalEvaluation + getPieceValue(piece, i ,j);;
       }
     }
-    if (localGame.in_checkmate()) {
-      if (localGame.turn() === player) {
-        totalEvaluation -= 100;
-      } else {
-        totalEvaluation += 100;
-      }
-    }
     materialValue = totalEvaluation;
   }
 
