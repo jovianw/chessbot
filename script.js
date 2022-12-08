@@ -21,7 +21,8 @@ const algorithms = {
 
 const metrics = {
   1 : 'material',
-  2 : 'positional'
+  2 : 'positional',
+  3 : 'monte carlo'
 }
 
 function removeHighlights (color) {
@@ -192,6 +193,12 @@ function evaluateBoard(localGame, player) {
     materialValue = totalEvaluation;
   }
 
+  if (metrics[metricInput.value] === 'monte carlo') {
+    for (let i = 0; i < 50; i++) {
+        //totalEvaluation = totalEvaluation + getPieceValue(piece, i ,j);
+    }
+    //materialValue = totalEvaluation;
+  }
   // Add a bonus for having more mobility
   // const legalMoves = localGame.moves({ verbose: true });
   // let mobilityBonus = 0;
