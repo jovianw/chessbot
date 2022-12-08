@@ -186,8 +186,14 @@ function evaluateBoard(localGame, player) {
   if (metrics[metricInput.value] === 'positional') {
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
-        const piece = localGame.get(String.fromCharCode(97 + i) + j);
-        utility += getPieceValue(piece, i ,j);;
+        const piece = localGame.get(String.fromCharCode(97 + i) + (j + 1));
+        if (piece) {
+          if (piece.color === player) {
+            utility += getPieceValue(piece, i ,j);
+          } else{
+            utility -= getPieceValue(piece, i ,j);
+          }
+        }
       }
     }
   }
@@ -200,8 +206,10 @@ function evaluateBoard(localGame, player) {
         if (piece) {
           if (piece.color === player) {
             utility += pieceValues[piece.type];
+            utility += getPieceValue(piece, i ,j);
           } else {
             utility -= pieceValues[piece.type];
+            utility -= getPieceValue(piece, i ,j);
           }
         }
       }
@@ -211,13 +219,6 @@ function evaluateBoard(localGame, player) {
         utility -= 100;
       } else {
         utility += 100;
-      }
-    }
-
-    for (let i = 0; i < 8; i++) {
-      for (let j = 0; j < 8; j++) {
-        const piece = localGame.get(String.fromCharCode(97 + i) + j);
-        utility += getPieceValue(piece, i ,j);;
       }
     }
   }
@@ -324,15 +325,21 @@ function makeMove () {
   if (game.game_over()) return
 
   // DEBUG
-  // console.log(algorithms[algorithmInput.value])
+  // console.log(pawnEvalWhite)
+  // console.log(pawnEvalBlack)
+  console.log(document.querySelector('#dual-engine').checked)
 
+  let player = game.turn()
+  depthInput = document.querySelector('#depth-input-' + player)
+  algorithmInput = document.querySelector('#algorithm-input-' + player)
+  metricInput = document.querySelector('#metric-input-' + player)
 
   // make move
   counter = 0
   DEPTH = depthInput.value
-  var startTime = new Date().getTime();
-  const { move: move, utility: utility } = maxValue(game, 'b', DEPTH, -Infinity, Infinity);
-  var endTime = new Date().getTime();
+  let startTime = new Date().getTime();
+  const { move: move, utility: utility } = maxValue(game, player, DEPTH, -Infinity, Infinity);
+  let endTime = new Date().getTime();
   console.log("Best utility:");
   console.log(utility);
   console.log("Counter:");
@@ -342,40 +349,58 @@ function makeMove () {
   $('#time').text("Elapsed Time: " + (endTime - startTime)/1000 + 's')
   game.move(move);
 
-  // highlight black's move
-  removeHighlights('black')
-  $board.find('.square-' + move.from).addClass('highlight-black')
-  squareToHighlight = move.to
+  if (player === 'b') {
+    // highlight black's move
+    removeHighlights('black')
+    $board.find('.square-' + move.from).addClass('highlight-black')
+    squareToHighlight = move.to
+  } else {
+    // highlight white's move
+    removeHighlights('white')
+    $board.find('.square-' + move.from).addClass('highlight-white')
+    squareToHighlight = move.to
+  }
 
   // update the board to the new position
   board.position(game.fen())
 
   checkGameEnd()
+  
+  if (document.querySelector('#dual-engine').checked) {
+    window.setTimeout(makeMove, 250)
+  }
 }
 
 function onDrop (source, target) {
-  // see if the move is legal
-  var move = game.move({
-    from: source,
-    to: target,
-    promotion: 'q' // NOTE: always promote to a queen for example simplicity
-  })
+  // if (!document.querySelector('#dual-engine').checked) {
+    // see if the move is legal
+    var move = game.move({
+      from: source,
+      to: target,
+      promotion: 'q' // NOTE: always promote to a queen for example simplicity
+    })
 
-  // illegal move
-  if (move === null) return 'snapback'
+    // illegal move
+    if (move === null) return 'snapback'
 
-  // highlight white's move
-  removeHighlights('white')
-  $board.find('.square-' + source).addClass('highlight-white')
-  $board.find('.square-' + target).addClass('highlight-white')
+    // highlight white's move
+    removeHighlights('white')
+    $board.find('.square-' + source).addClass('highlight-white')
+    $board.find('.square-' + target).addClass('highlight-white')
 
-  // make move for black
-  window.setTimeout(makeMove, 250)
+    // make move for black
+    window.setTimeout(makeMove, 250)
+  // }
 }
 
 function onMoveEnd () {
-  $board.find('.square-' + squareToHighlight)
-    .addClass('highlight-black')
+  if (game.turn() === 'b') {
+    $board.find('.square-' + squareToHighlight)
+      .addClass('highlight-black')
+  } else {
+    $board.find('.square-' + squareToHighlight)
+      .addClass('highlight-white')
+  }
 }
 
 // update the board position after the piece snap
@@ -398,10 +423,19 @@ $(document).ready(function(){
   $message = $('#message')
   board = Chessboard('myBoard', config)
   console.log(game)
-  depthInput = document.querySelector('#depth-input')
-  algorithmInput = document.querySelector('#algorithm-input')
-  metricInput = document.querySelector('#metric-input')
 });
+
+function dualToggle(cb) {
+  document.getElementById("white-container").style.display = cb.checked ? "flex" : "none"
+  document.getElementById("start-button").style.display = cb.checked ? "block" : "none"
+  document.getElementById("start-button").disabled = cb.checked ? false : true
+  checked = true
+};
+
+function startMoves() {
+  document.getElementById("start-button").disabled = true
+  makeMove()
+}
 
 // Stop scrolling on mobile
 function preventBehavior(e) {

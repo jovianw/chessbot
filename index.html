@@ -15,36 +15,79 @@
     <div id="content">
       <h1 id="test">ScuffedFish</h1>
       <div id="myBoard" style="width: 400px"></div>
-      <div id="search-algorithm" class="input-container">
-        <p id="algorithm">Algorithm: </p>
-        <select id="algorithm-input" class="select-input">
-          <option value="1">Minimax</option>
-          <option value="2" selected>Minimax + Pruning</option>
-        </select>
-      </div>
 
-      <div id="evaluation" class="input-container">
-        <p id="metric">Evaluation Metric: 
-        <select id="metric-input" class="select-input">
-          <option value="1">Material</option>
-          <option value="2">Positional</option>
-          <option value="3" selected>Material + Positional</option>
-        </select>
-        </p>
-      </div>
+      <label>
+        <input type="checkbox" id="dual-engine" name="dual-engine" onclick="dualToggle(this)">Toggle AI vs. AI
+      </label>
+      <button onclick="startMoves()" id="start-button">Start</button>
 
-      <div id="depth-container" class="input-container">
-        <p id="depth">Search Depth: </p>
-        <select id="depth-input" class="select-input">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3" selected>3</option>
-          <option value="4">4</option>
-        </select>
+      <div class="horizontal-container ai-container">
+        <div id="white-container" class="vertical-container dual-toggle">
+          <h3>WHITE</h3>
+          <div class="horizontal-container">
+            <p>Algorithm: </p>
+            <select id="algorithm-input-w" class="select-input">
+              <option value="1">Minimax</option>
+              <option value="2" selected>Minimax + Pruning</option>
+            </select>
+          </div>
+    
+          <div class="horizontal-container">
+            <p>Evaluation Metric: 
+            <select id="metric-input-w" class="select-input">
+              <option value="1">Material</option>
+              <option value="2">Positional</option>
+              <option value="3" selected>Material + Positional</option>
+            </select>
+            </p>
+          </div>
+    
+          <div class="horizontal-container">
+            <p>Search Depth: </p>
+            <select id="depth-input-w" class="select-input">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+        </div>
+  
+        <div id="black-container" class="vertical-container">
+          <h3>BLACK</h3>
+          <div class="horizontal-container">
+            <p>Algorithm: </p>
+            <select id="algorithm-input-b" class="select-input">
+              <option value="1">Minimax</option>
+              <option value="2" selected>Minimax + Pruning</option>
+            </select>
+          </div>
+    
+          <div class="horizontal-container">
+            <p>Evaluation Metric: 
+            <select id="metric-input-b" class="select-input">
+              <option value="1">Material</option>
+              <option value="2">Positional</option>
+              <option value="3" selected>Material + Positional</option>
+            </select>
+            </p>
+          </div>
+    
+          <div class="horizontal-container">
+            <p>Search Depth: </p>
+            <select id="depth-input-b" class="select-input">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+        </div>
       </div>
+      
       <p id="counter">Visited Nodes: 0</p>
       <p id="utility">Best Move Evaluation: 0</p>
       <p id="time">Elapsed Time: 0</p>
-    </div>
+      <p id="message">---</p>
   </body>
 </html>
