@@ -25,11 +25,11 @@ body {
     flex-direction: column;
 }
 
-#depth-container {
+.input-container {
     display: flex;
 }
 
-#depth-input {
+.select-input {
     border: 0;
     outline: 0;
 }

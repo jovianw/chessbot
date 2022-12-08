@@ -22,7 +22,7 @@ const algorithms = {
 const metrics = {
   1 : 'material',
   2 : 'positional',
-  3 : 'monte carlo'
+  3 : 'material + positional'
 }
 
 function removeHighlights (color) {
@@ -38,6 +38,9 @@ function onDragStart (source, piece, position, orientation) {
   // only pick up pieces for White
   if (piece.search(/^b/) !== -1) return false
 }
+
+
+//---------------POSITIONAL EVAL
 
 
 var reverseArray = function(array) {
@@ -145,67 +148,81 @@ var kingEvalWhite = [
   [  2.0,  3.0,  1.0,  0.0,  0.0,  1.0,  3.0,  2.0 ]
 ];
 
+var kingEvalBlack = reverseArray(kingEvalWhite)
+
+//------------------END POSITIONAL EVAL
+
 
 //------------------MINIMAX
 
 
 function evaluateBoard(localGame, player) {
   // Calculate the material value of the localGame for the given player
-  let materialValue = Math.random();
-  var totalEvaluation = 0;
+  let utility = Math.random();
   // material evaluation
   if (metrics[metricInput.value] === 'material') {
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
-        const piece = localGame.get(String.fromCharCode(97 + i) + j);
+        const piece = localGame.get(String.fromCharCode(97 + i) + (j + 1));
         if (piece) {
           if (piece.color === player) {
-            materialValue += pieceValues[piece.type];
+            utility += pieceValues[piece.type];
           } else {
-            materialValue -= pieceValues[piece.type];
+            utility -= pieceValues[piece.type];
           }
         }
       }
     }
     if (localGame.in_checkmate()) {
       if (localGame.turn() === player) {
-        materialValue -= 100;
+        utility -= 100;
       } else {
-        materialValue += 100;
+        utility += 100;
       }
     }
   }
 
+  // positional evaluation
   if (metrics[metricInput.value] === 'positional') {
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
         const piece = localGame.get(String.fromCharCode(97 + i) + j);
-        totalEvaluation = totalEvaluation + getPieceValue(piece, i ,j);;
+        utility += getPieceValue(piece, i ,j);;
       }
     }
-    materialValue = totalEvaluation;
   }
 
-  if (metrics[metricInput.value] === 'monte carlo') {
-    for (let i = 0; i < 50; i++) {
-        //totalEvaluation = totalEvaluation + getPieceValue(piece, i ,j);
+  // material + positional evaluation
+  if (metrics[metricInput.value] === 'material + positional') {
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        const piece = localGame.get(String.fromCharCode(97 + i) + (j + 1));
+        if (piece) {
+          if (piece.color === player) {
+            utility += pieceValues[piece.type];
+          } else {
+            utility -= pieceValues[piece.type];
+          }
+        }
+      }
     }
-    //materialValue = totalEvaluation;
-  }
-  // Add a bonus for having more mobility
-  // const legalMoves = localGame.moves({ verbose: true });
-  // let mobilityBonus = 0;
-  // for (const move of legalMoves) {
-  //   if (move.color === player) {
-  //     mobilityBonus++;
-  //   } else {
-  //     mobilityBonus--;
-  //   }
-  // }
+    if (localGame.in_checkmate()) {
+      if (localGame.turn() === player) {
+        utility -= 100;
+      } else {
+        utility += 100;
+      }
+    }
 
-  // Return the total utility
-  // return (10 * materialValue) //+ mobilityBonus;
-  return materialValue
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        const piece = localGame.get(String.fromCharCode(97 + i) + j);
+        utility += getPieceValue(piece, i ,j);;
+      }
+    }
+  }
+
+  return utility
 }
 
 function maxValue(localGame, player, depth, alpha, beta) {
@@ -236,10 +253,8 @@ function maxValue(localGame, player, depth, alpha, beta) {
 
     // Update alpha and beta for alpha-beta pruning
     if (algorithms[algorithmInput.value] === 'alpha-beta pruning') {
-      console.log('error')
       alpha = Math.max(alpha, utility);
       if (beta <= alpha) {
-        console.log('Pruned something!')
         break;
       }
     }
@@ -277,9 +292,8 @@ function minValue(localGame, player, depth, alpha, beta) {
 
     // Update alpha and beta for alpha-beta pruning
     if (algorithms[algorithmInput.value] === 'alpha-beta pruning') {
-      alpha = Math.min(alpha, utility);
+      beta = Math.min(beta, utility);
       if (beta <= alpha) {
-        console.log('Pruned something!')
         break;
       }
     }
@@ -308,6 +322,10 @@ function makeMove () {
   checkGameEnd()
   // game over
   if (game.game_over()) return
+
+  // DEBUG
+  // console.log(algorithms[algorithmInput.value])
+
 
   // make move
   counter = 0
@@ -382,7 +400,7 @@ $(document).ready(function(){
   console.log(game)
   depthInput = document.querySelector('#depth-input')
   algorithmInput = document.querySelector('#algorithm-input')
-  metricInput = document.querySelector('#evaluation-metric')
+  metricInput = document.querySelector('#metric-input')
 });
 
 // Stop scrolling on mobile
