@@ -394,7 +394,7 @@ function onDrop (source, target) {
 }
 
 function onMoveEnd () {
-  if (game.turn() === 'b') {
+  if (game.turn() === 'w') {
     $board.find('.square-' + squareToHighlight)
       .addClass('highlight-black')
   } else {
