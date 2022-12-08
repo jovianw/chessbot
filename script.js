@@ -1,4 +1,4 @@
-var DEPTH = 3
+var DEPTH = 2
 
 var board = null
 var game = new Chess()
@@ -14,6 +14,14 @@ const pieceValues = {
   'q': 9
 }
 
+const algorithms = {
+  1 : 'minimax',
+  2 : 'alpha-beta pruning'
+}
+
+const metrics = {
+  1 : 'material'
+}
 
 function removeHighlights (color) {
   $board.find('.' + squareClass)
@@ -36,24 +44,32 @@ function onDragStart (source, piece, position, orientation) {
 function evaluateBoard(localGame, player) {
   // Calculate the material value of the localGame for the given player
   let materialValue = Math.random();
-  for (let i = 0; i < 8; i++) {
-    for (let j = 0; j < 8; j++) {
-      const piece = localGame.get(String.fromCharCode(97 + i) + j);
-      if (piece) {
-        if (piece.color === player) {
-          materialValue += pieceValues[piece.type];
-        } else {
-          materialValue -= pieceValues[piece.type];
+
+  // material evaluation
+  if (metrics[metricInput.value] === 'material') {
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        const piece = localGame.get(String.fromCharCode(97 + i) + j);
+        if (piece) {
+          if (piece.color === player) {
+            materialValue += pieceValues[piece.type];
+          } else {
+            materialValue -= pieceValues[piece.type];
+          }
         }
       }
     }
-  }
-  if (localGame.in_checkmate()) {
-    if (localGame.turn() === player) {
-      materialValue -= 100;
-    } else {
-      materialValue += 100;
+    if (localGame.in_checkmate()) {
+      if (localGame.turn() === player) {
+        materialValue -= 100;
+      } else {
+        materialValue += 100;
+      }
     }
+  }
+
+  if (metrics[metricInput.value] === '') {
+    
   }
 
   // Add a bonus for having more mobility
@@ -68,7 +84,8 @@ function evaluateBoard(localGame, player) {
   // }
 
   // Return the total utility
-  return (10 * materialValue) //+ mobilityBonus;
+  // return (10 * materialValue) //+ mobilityBonus;
+  return materialValue
 }
 
 
@@ -99,9 +116,13 @@ function maxValue(localGame, player, depth, alpha, beta) {
     }
 
     // Update alpha and beta for alpha-beta pruning
-    alpha = Math.max(alpha, utility);
-    if (beta <= alpha) {
-      break;
+    if (algorithms[algorithmInput.value] === 'alpha-beta pruning') {
+      console.log('error')
+      alpha = Math.max(alpha, utility);
+      if (beta <= alpha) {
+        console.log('Pruned something!')
+        break;
+      }
     }
   }
 
@@ -136,9 +157,12 @@ function minValue(localGame, player, depth, alpha, beta) {
     }
 
     // Update alpha and beta for alpha-beta pruning
-    alpha = Math.min(alpha, utility);
-    if (beta <= alpha) {
-      break;
+    if (algorithms[algorithmInput.value] === 'alpha-beta pruning') {
+      alpha = Math.min(alpha, utility);
+      if (beta <= alpha) {
+        console.log('Pruned something!')
+        break;
+      }
     }
   }
 
@@ -169,13 +193,16 @@ function makeMove () {
   // make move
   counter = 0
   DEPTH = depthInput.value
+  var startTime = new Date().getTime();
   const { move: move, utility: utility } = maxValue(game, 'b', DEPTH, -Infinity, Infinity);
+  var endTime = new Date().getTime();
   console.log("Best utility:");
   console.log(utility);
   console.log("Counter:");
   console.log(counter)
-  $('#counter').text("Nodes visited: " + counter)
-  $('#utility').text("Best AI utility: " + utility)
+  $('#counter').text("Visited Nodes: " + counter)
+  $('#utility').text("Best Move Evaluation: " + utility)
+  $('#time').text("Elapsed Time: " + (endTime - startTime)/1000 + 's')
   game.move(move);
 
   // highlight black's move
@@ -235,6 +262,8 @@ $(document).ready(function(){
   board = Chessboard('myBoard', config)
   console.log(game)
   depthInput = document.querySelector('#depth-input')
+  algorithmInput = document.querySelector('#algorithm-input')
+  metricInput = document.querySelector('#evaluation-metric')
 });
 
 // Stop scrolling on mobile

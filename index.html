@@ -13,20 +13,38 @@
   </head>
   <body>
     <div id="content">
-      <h1 id="test">Minimax & Alpha-beta Pruning Chess AI</h1>
+      <h1 id="test">ScuffedFish</h1>
       <div id="myBoard" style="width: 400px"></div>
+      <div id="search-algorithm">
+        <p id="algorithm">Algorithm: </p>
+        <select id="algorithm-input">
+          <option value="1">Minimax</option>
+          <option value="2">Pruning</option>
+        </select>
+      </div>
+
+      <div id="evaluation">
+        <p id="metric">Evaluation Metric: 
+        <select id="evaluation-metric">
+          <option value="1">Material</option>
+          <option value="2"></option>
+          <option value="3"></option>
+        </select>
+        </p>
+      </div>
+
       <div id="depth-container">
-        <p id="depth">Search depth: </p>
+        <p id="depth">Search Depth: </p>
         <select id="depth-input">
           <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3" selected>3</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
           <option value="4">4</option>
         </select>
       </div>
-      <p id="counter">Nodes visited: 0</p>
-      <p id="utility">Best AI utility: 0</p>
-      <p id="message"></p>
+      <p id="counter">Visited Nodes: 0</p>
+      <p id="utility">Best Move Evaluation: 0</p>
+      <p id="time">Elapsed Time: 0</p>
     </div>
   </body>
 </html>
