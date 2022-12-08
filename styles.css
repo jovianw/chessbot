@@ -69,3 +69,10 @@ h3 {
 h1 {
     margin: 0;
 }
+
+
+@media (orientation: portrait) {
+    #myBoard {
+        width: 90vw;
+    }
+}
