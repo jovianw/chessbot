@@ -6,7 +6,7 @@ var squareToHighlight = null
 var squareClass = 'square-55d63'
 var counter = 0
 const pieceValues = {
-  'k': 0,
+  'k': 90,
   'p': 1,
   'n': 3,
   'b': 3,
